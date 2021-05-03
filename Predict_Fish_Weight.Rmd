@@ -108,3 +108,36 @@ summary.lm(BreamModel)
 The adjusted $r^2$ of height and length2 is 0.9356. The residual standard error of the two best regression models is 53.1 
 
 # Smelt  
+
+```{r}
+library(leaps)
+regsubsets.out <-
+    regsubsets(Weight ~ .,
+               data = Smelt,
+               nbest = 1,       # 1 best model for each number of predictors
+               nvmax = NULL,    # NULL for no limit on number of variables
+               force.in = NULL, force.out = NULL,
+               method = "exhaustive")
+
+summary.out <- summary(regsubsets.out)
+as.data.frame(summary.out$outmat)
+library(car)
+subsets(regsubsets.out,statistic="adjr2",legend="bottomright",main="Adjusted R^2")
+```
+
+From the plot above we see that the best regression model is Length1, length2, length3, width and height. The model of Length1, length2, length3, height, width, and length are the adjusted $r^2$ of about 0.97.
+
+## Which is best??  
+
+```{r}
+which.max(summary.out$adjr2)
+```
+```{r}
+summary.out$which[2,]
+```
+
+```{r}
+SmeltModel <- lm(Weight~Height+Length2+Length1+ Length3 , data=Smelt)
+summary.lm(SmeltModel) 
+```
+The adjusted $r^2$ of length1, length2, length3, height, and width is 0.9574. The residual standard error of the two best regression models is 0.8523
